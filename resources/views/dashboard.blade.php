@@ -21,7 +21,7 @@
     <div class="min-h-screen pb-24" style="background: {{ $theme['bg'] }}; color: {{ $theme['text'] }};">
         <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
 
-            <header class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
+            <header class="relative flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
                 <div x-data="dashboardLocation(@js($user->name), @js($user->city), @js($user->state), @js($greeting), @js($greetingIcon))" x-init="load()">
                     <p class="text-sm font-semibold tracking-widest uppercase" style="color: {{ $theme['muted'] }}">
                         Inicio
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="w-full xl:w-auto space-y-3" x-data="{ notificationsOpen: false }">
-                    <div class="flex justify-end relative">
+                    <div class="absolute right-0 top-0 z-20 flex justify-end xl:static xl:relative">
                         <button
                             type="button"
                             @click="notificationsOpen = !notificationsOpen"

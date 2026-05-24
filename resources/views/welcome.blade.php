@@ -106,6 +106,8 @@
             background:
                 linear-gradient(180deg, rgba(255, 248, 245, 0.94), rgba(255, 248, 245, 1) 62%, #fff 100%),
                 repeating-linear-gradient(135deg, rgba(225, 87, 139, 0.055) 0 1px, transparent 1px 22px);
+            background-size: auto, 180px 180px;
+            animation: landing-texture-drift 22s linear infinite;
         }
 
         .glass-nav {
@@ -129,6 +131,7 @@
                 linear-gradient(90deg, rgba(17, 24, 39, 0.06) 1px, transparent 1px);
             background-size: 56px 56px;
             mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.72), transparent 82%);
+            animation: hero-grid-drift 18s linear infinite;
         }
 
         .mock-board,
@@ -187,6 +190,18 @@
 
         .mock-board-mobile {
             animation: mock-mobile-float 7s ease-in-out infinite;
+        }
+
+        .landing-badge {
+            animation: landing-badge-float 5.5s ease-in-out infinite;
+        }
+
+        .landing-proof-card {
+            animation: landing-card-float 7s ease-in-out infinite;
+        }
+
+        .landing-stat-card {
+            animation: landing-card-float 8s ease-in-out infinite;
         }
 
         .section-white {
@@ -275,12 +290,53 @@
             }
         }
 
+        @keyframes landing-texture-drift {
+            0% {
+                background-position: 0 0, 0 0;
+            }
+            100% {
+                background-position: 0 0, 180px 180px;
+            }
+        }
+
+        @keyframes hero-grid-drift {
+            0% {
+                background-position: 0 0, 0 0;
+            }
+            100% {
+                background-position: 56px 56px, 56px 56px;
+            }
+        }
+
+        @keyframes landing-badge-float {
+            0%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+            50% {
+                transform: translate3d(0, -6px, 0);
+            }
+        }
+
+        @keyframes landing-card-float {
+            0%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+            50% {
+                transform: translate3d(0, -7px, 0);
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            .landing-shell,
+            .hero-pattern::before,
             .mock-board,
             .mock-cart,
             .mock-proof,
             .mock-board-mobile,
-            .product-art {
+            .product-art,
+            .landing-badge,
+            .landing-proof-card,
+            .landing-stat-card {
                 animation: none;
             }
         }
@@ -430,7 +486,7 @@
 
                 <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="max-w-[680px] pt-10 lg:pt-20">
-                        <p class="inline-flex rounded-full px-4 py-2 mini-label text-sm font-black text-pink-700">
+                        <p class="landing-badge inline-flex rounded-full px-4 py-2 mini-label text-sm font-black text-pink-700">
                             Para vender pelo WhatsApp com menos bagunca e mais pedidos
                         </p>
 
@@ -462,7 +518,7 @@
 
                         <div class="mt-7 grid sm:grid-cols-3 gap-3 max-w-3xl">
                             @foreach($proofPoints as $proof)
-                                <article class="soft-card rounded-3xl p-4 flex gap-3">
+                                <article class="landing-proof-card soft-card rounded-3xl p-4 flex gap-3" style="animation-delay: {{ $loop->index * 0.45 }}s">
                                     <span class="h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center bg-pink-50 text-pink-600">
                                         <x-dashboard-icon :name="$proof['icon']" class="w-5 h-5" />
                                     </span>
@@ -508,7 +564,7 @@
                                 </div>
                             </div>
 
-                            <div class="absolute -bottom-5 right-2 rounded-3xl border border-pink-100 bg-white/95 px-4 py-3 shadow-xl flex items-center gap-3">
+                            <div class="landing-badge absolute -bottom-5 right-2 rounded-3xl border border-pink-100 bg-white/95 px-4 py-3 shadow-xl flex items-center gap-3">
                                 <span class="h-10 w-10 rounded-2xl flex items-center justify-center bg-pink-100 text-pink-600">
                                     <x-dashboard-icon name="orders" class="w-5 h-5" />
                                 </span>
@@ -520,15 +576,15 @@
                         </div>
 
                         <div class="mt-10 grid sm:grid-cols-3 gap-3 max-w-2xl">
-                            <div class="soft-card rounded-3xl p-4">
+                            <div class="landing-stat-card soft-card rounded-3xl p-4">
                                 <p class="text-3xl font-black">6</p>
                                 <p class="text-sm text-gray-500">produtos para testar gratis</p>
                             </div>
-                            <div class="soft-card rounded-3xl p-4">
+                            <div class="landing-stat-card soft-card rounded-3xl p-4" style="animation-delay: .35s">
                                 <p class="text-3xl font-black">3</p>
                                 <p class="text-sm text-gray-500">fotos para valorizar cada produto</p>
                             </div>
-                            <div class="soft-card rounded-3xl p-4">
+                            <div class="landing-stat-card soft-card rounded-3xl p-4" style="animation-delay: .7s">
                                 <p class="text-3xl font-black">0</p>
                                 <p class="text-sm text-gray-500">codigo ou instalacao para comecar</p>
                             </div>
