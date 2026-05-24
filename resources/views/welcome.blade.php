@@ -1,5 +1,8 @@
 @php
     $plans = app(\App\Services\Plans\PlanCatalog::class)->all();
+    $supportPhone = preg_replace('/\D/', '', (string) config('services.whatsapp.support_number'));
+    $supportPhone = $supportPhone && ! str_starts_with($supportPhone, '55') ? '55' . $supportPhone : $supportPhone;
+    $supportMessage = 'Oi, vim pelo site da Shopla e quero tirar uma duvida.';
 
     $painPoints = [
         ['title' => 'Cliente pergunta e some', 'text' => 'No WhatsApp puro, voce manda foto, preco e descricao toda vez. A compra esfria antes do pedido ficar claro.'],
@@ -151,7 +154,7 @@
             border-radius: 30px;
             padding: 18px;
             transform: rotate(-1.6deg);
-            animation: mock-board-float 8s ease-in-out infinite;
+            animation: mock-board-float 7.5s ease-in-out infinite;
         }
 
         .mock-cart {
@@ -162,7 +165,7 @@
             border-radius: 28px;
             padding: 18px;
             transform: rotate(2deg);
-            animation: mock-cart-float 7s ease-in-out infinite;
+            animation: mock-cart-float 6.8s ease-in-out infinite;
         }
 
         .mock-proof {
@@ -174,12 +177,54 @@
             animation: mock-proof-float 6.5s ease-in-out infinite;
         }
 
+        .mock-board::after,
+        .mock-cart::after {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            border-radius: inherit;
+            pointer-events: none;
+            background: linear-gradient(120deg, transparent 8%, rgba(255, 255, 255, 0.42) 24%, transparent 42%);
+            transform: translateX(-120%);
+            animation: mock-sheen 8.5s ease-in-out infinite;
+        }
+
+        .mock-board .bg-red-300,
+        .mock-board .bg-yellow-300,
+        .mock-board .bg-green-300,
+        .mock-board-mobile .bg-red-300,
+        .mock-board-mobile .bg-yellow-300,
+        .mock-board-mobile .bg-green-300 {
+            animation: dot-pulse 2.8s ease-in-out infinite;
+        }
+
+        .mock-board .bg-yellow-300,
+        .mock-board-mobile .bg-yellow-300 {
+            animation-delay: .25s;
+        }
+
+        .mock-board .bg-green-300,
+        .mock-board-mobile .bg-green-300 {
+            animation-delay: .5s;
+        }
+
         .product-art {
+            position: relative;
+            overflow: hidden;
             background:
                 linear-gradient(135deg, rgba(225, 87, 139, 0.14), rgba(246, 194, 74, 0.32)),
                 linear-gradient(45deg, #fff 0 18%, #f6bfd4 18% 34%, #fff 34% 52%, #c8f3d9 52% 70%, #fff 70% 100%);
             background-size: 130% 130%;
             animation: product-art-pan 12s ease-in-out infinite alternate;
+        }
+
+        .product-art::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.52) 45%, transparent 70%);
+            transform: translateX(-125%);
+            animation: product-shine 6.5s ease-in-out infinite;
         }
 
         .product-art.alt {
@@ -245,12 +290,32 @@
             background: rgba(255, 255, 255, 0.88);
         }
 
+        .whatsapp-float {
+            animation: whatsapp-float 4.8s ease-in-out infinite;
+        }
+
+        .whatsapp-float::before {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            border-radius: 999px;
+            background: rgba(47, 172, 102, 0.18);
+            animation: whatsapp-pulse 2.8s ease-out infinite;
+            z-index: -1;
+        }
+
         @keyframes mock-board-float {
             0%, 100% {
                 transform: translate3d(0, 0, 0) rotate(-1.6deg);
             }
+            35% {
+                transform: translate3d(8px, -16px, 0) rotate(-0.9deg);
+            }
             50% {
-                transform: translate3d(0, -12px, 0) rotate(-0.7deg);
+                transform: translate3d(0, -20px, 0) rotate(-0.5deg);
+            }
+            72% {
+                transform: translate3d(-6px, -8px, 0) rotate(-1.3deg);
             }
         }
 
@@ -258,8 +323,14 @@
             0%, 100% {
                 transform: translate3d(0, 0, 0) rotate(2deg);
             }
+            38% {
+                transform: translate3d(-10px, 14px, 0) rotate(1deg);
+            }
             50% {
-                transform: translate3d(-8px, 10px, 0) rotate(1.2deg);
+                transform: translate3d(-14px, 18px, 0) rotate(0.8deg);
+            }
+            76% {
+                transform: translate3d(7px, 8px, 0) rotate(2.6deg);
             }
         }
 
@@ -268,7 +339,7 @@
                 transform: translate3d(0, 0, 0);
             }
             50% {
-                transform: translate3d(0, -9px, 0);
+                transform: translate3d(0, -13px, 0);
             }
         }
 
@@ -287,6 +358,60 @@
             }
             100% {
                 background-position: 100% 50%;
+            }
+        }
+
+        @keyframes product-shine {
+            0%, 42% {
+                transform: translateX(-125%);
+            }
+            62%, 100% {
+                transform: translateX(125%);
+            }
+        }
+
+        @keyframes mock-sheen {
+            0%, 50% {
+                transform: translateX(-120%);
+                opacity: 0;
+            }
+            62% {
+                opacity: 1;
+            }
+            82%, 100% {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes dot-pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: .78;
+            }
+            50% {
+                transform: scale(1.18);
+                opacity: 1;
+            }
+        }
+
+        @keyframes whatsapp-float {
+            0%, 100% {
+                transform: translate3d(0, 0, 0);
+            }
+            50% {
+                transform: translate3d(0, -8px, 0);
+            }
+        }
+
+        @keyframes whatsapp-pulse {
+            0% {
+                transform: scale(.86);
+                opacity: .7;
+            }
+            100% {
+                transform: scale(1.45);
+                opacity: 0;
             }
         }
 
@@ -334,6 +459,17 @@
             .mock-proof,
             .mock-board-mobile,
             .product-art,
+            .product-art::after,
+            .mock-board::after,
+            .mock-cart::after,
+            .mock-board .bg-red-300,
+            .mock-board .bg-yellow-300,
+            .mock-board .bg-green-300,
+            .mock-board-mobile .bg-red-300,
+            .mock-board-mobile .bg-yellow-300,
+            .mock-board-mobile .bg-green-300,
+            .whatsapp-float,
+            .whatsapp-float::before,
             .landing-badge,
             .landing-proof-card,
             .landing-stat-card {
@@ -374,10 +510,12 @@
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-7 text-sm font-bold text-gray-600">
+                    <a href="{{ route('about') }}" class="hover:text-pink-600">Sobre</a>
                     <a href="#problema" class="hover:text-pink-600">Problema</a>
                     <a href="#metodo" class="hover:text-pink-600">Metodo</a>
                     <a href="#recursos" class="hover:text-pink-600">Beneficios</a>
                     <a href="#planos" class="hover:text-pink-600">Planos</a>
+                    <a href="{{ route('contact') }}" class="hover:text-pink-600">Contato</a>
                     <a href="#faq" class="hover:text-pink-600">Duvidas</a>
                 </nav>
 
@@ -876,9 +1014,65 @@
         <footer class="border-t border-pink-100 bg-white py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
                 <p class="font-bold text-gray-900">Shopla</p>
-                <p>Vitrine, pedidos e gestao simples para pequenos negocios.</p>
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <a href="{{ route('about') }}" class="font-bold text-gray-700 hover:text-pink-600">Sobre</a>
+                    <a href="{{ route('contact') }}" class="font-bold text-gray-700 hover:text-pink-600">Contato</a>
+                    <p>Vitrine, pedidos e gestao simples para pequenos negocios.</p>
+                </div>
             </div>
         </footer>
+
+        @if($supportPhone)
+            <div
+                x-data="{ open: false, message: @js($supportMessage) }"
+                class="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3"
+            >
+                <div
+                    x-cloak
+                    x-show="open"
+                    x-transition
+                    @click.outside="open = false"
+                    class="w-[min(92vw,340px)] rounded-[1.75rem] border border-green-100 bg-white p-4 shadow-2xl shadow-green-900/10"
+                >
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-100 text-green-700">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M20.52 3.48A11.86 11.86 0 0 0 12.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.88 11.88 0 0 0 5.78 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.47-8.44ZM12.09 21.8h-.01a9.86 9.86 0 0 1-5.02-1.37l-.36-.21-3.74.98 1-3.65-.24-.38a9.83 9.83 0 0 1-1.5-5.27c0-5.45 4.43-9.88 9.88-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.43 9.89-9.89 9.89Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.88.12.57-.09 1.76-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <p class="font-black">Fale com a Shopla</p>
+                            <p class="text-xs text-gray-500">Respondemos pelo WhatsApp</p>
+                        </div>
+                    </div>
+
+                    <textarea
+                        x-model="message"
+                        rows="4"
+                        class="mt-4 w-full rounded-2xl border border-green-100 bg-green-50/50 px-4 py-3 text-sm outline-none focus:border-green-300 focus:ring-4 focus:ring-green-100"
+                    ></textarea>
+
+                    <a
+                        x-bind:href="'https://wa.me/{{ $supportPhone }}?text=' + encodeURIComponent(message)"
+                        target="_blank"
+                        class="mt-3 flex w-full items-center justify-center rounded-2xl bg-green-500 px-5 py-3 font-black text-white"
+                    >
+                        Enviar mensagem
+                    </a>
+                </div>
+
+                <button
+                    type="button"
+                    @click="open = !open"
+                    class="whatsapp-float relative flex h-16 w-16 items-center justify-center rounded-full bg-green-500 text-white shadow-2xl shadow-green-900/20"
+                    aria-label="Abrir chat no WhatsApp"
+                >
+                    <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.52 3.48A11.86 11.86 0 0 0 12.08 0C5.52 0 .18 5.34.18 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.88 11.88 0 0 0 5.78 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.47-8.44ZM12.09 21.8h-.01a9.86 9.86 0 0 1-5.02-1.37l-.36-.21-3.74.98 1-3.65-.24-.38a9.83 9.83 0 0 1-1.5-5.27c0-5.45 4.43-9.88 9.88-9.88 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 6.99c0 5.45-4.43 9.89-9.89 9.89Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.88.12.57-.09 1.76-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/>
+                    </svg>
+                </button>
+            </div>
+        @endif
     </div>
 </body>
 </html>

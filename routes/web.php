@@ -30,6 +30,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/sobre', 'public.about')->name('about');
+Route::view('/contato', 'public.contact')->name('contact');
+
 /*
 |--------------------------------------------------------------------------
 | Dashboard do lojista
