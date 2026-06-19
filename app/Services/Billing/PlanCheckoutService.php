@@ -16,7 +16,13 @@ class PlanCheckoutService
     {
     }
 
-    public function start(User $user, string $planKey, string $returnTo = 'plans', string $billingPeriod = 'monthly'): PlanSubscription
+    public function start(
+        User $user,
+        string $planKey,
+        string $returnTo = 'plans',
+        string $billingPeriod = 'monthly',
+        string $paymentMethod = 'credit_card'
+    ): PlanSubscription
     {
         $plan = $this->plans->find($planKey);
 
@@ -34,6 +40,7 @@ class PlanCheckoutService
 
         $this->ensureBillingProfileIsComplete($user);
         $billing = $this->billingOption($plan, $billingPeriod);
+        $billingType = $paymentMethod === 'pix' ? 'PIX' : 'CREDIT_CARD';
 
         $subscription = PlanSubscription::create([
             'user_id' => $user->id,
@@ -44,7 +51,7 @@ class PlanCheckoutService
         ]);
 
         $checkout = $this->asaas->createCheckout(
-            $this->checkoutPayload($user, $subscription, $plan, $returnTo, $billing)
+            $this->checkoutPayload($user, $subscription, $plan, $returnTo, $billing, $billingType)
         );
 
         $checkoutId = $checkout['id'] ?? null;
@@ -61,7 +68,14 @@ class PlanCheckoutService
         return $subscription->refresh();
     }
 
-    private function checkoutPayload(User $user, PlanSubscription $subscription, array $plan, string $returnTo, array $billing): array
+    private function checkoutPayload(
+        User $user,
+        PlanSubscription $subscription,
+        array $plan,
+        string $returnTo,
+        array $billing,
+        string $billingType
+    ): array
     {
         $returnTo = in_array($returnTo, ['plans', 'onboarding'], true) ? $returnTo : 'plans';
         $successUrl = route('plans.return', ['status' => 'sucesso', 'return_to' => $returnTo]);
@@ -69,7 +83,7 @@ class PlanCheckoutService
         $expiredUrl = route('plans.return', ['status' => 'expirado', 'return_to' => $returnTo]);
 
         return array_filter([
-            'billingTypes' => ['CREDIT_CARD'],
+            'billingTypes' => [$billingType],
             'chargeTypes' => ['RECURRENT'],
             'minutesToExpire' => config('services.asaas.checkout_expiration_minutes', 120),
             'externalReference' => $subscription->external_reference,

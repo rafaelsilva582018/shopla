@@ -10,7 +10,7 @@ $annualPrice = fn (float $price): float => round($price * 12 * $annualDiscountMu
 return [
     'free' => [
         'name' => 'Gratuito',
-        'limit' => 6,
+        'limit' => 10,
         'custom_slug' => false,
         'description' => 'Para comecar a montar a vitrine.',
     ],

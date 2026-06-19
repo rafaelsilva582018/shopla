@@ -87,6 +87,42 @@ class AsaasBillingTest extends TestCase
         Http::assertSentCount(0);
     }
 
+    public function test_user_can_start_monthly_pix_checkout(): void
+    {
+        config([
+            'services.asaas.access_token' => '$aact_hmlg_test',
+            'services.asaas.base_url' => 'https://api-sandbox.asaas.com/v3',
+            'services.asaas.checkout_url' => 'https://asaas.com/checkoutSession/show?id=',
+        ]);
+
+        Http::fake([
+            'https://api-sandbox.asaas.com/v3/checkouts' => Http::response([
+                'id' => 'checkout_pix',
+            ]),
+        ]);
+
+        $user = User::factory()->create([
+            'plan' => 'free',
+            'phone' => '18999999999',
+            'document' => '12345678909',
+            'zip_code' => '16700000',
+            'address' => 'Rua Teste',
+            'address_number' => '123',
+            'district' => 'Centro',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('plans.checkout', 'plus'), [
+                'billing_period' => 'monthly',
+                'payment_method' => 'pix',
+            ])
+            ->assertRedirect('https://asaas.com/checkoutSession/show?id=checkout_pix');
+
+        Http::assertSent(fn ($request) => $request['billingTypes'] === ['PIX']
+            && $request['chargeTypes'] === ['RECURRENT']
+            && $request['subscription']['cycle'] === 'MONTHLY');
+    }
+
     public function test_user_can_start_annual_checkout_with_discount(): void
     {
         config([

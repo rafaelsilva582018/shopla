@@ -57,7 +57,7 @@
         ['q' => 'Quanto tempo demora para criar minha loja?', 'a' => 'Voce consegue sair do zero com tema, dados da loja, categorias e primeiros produtos em poucos minutos pelo wizard inicial.'],
         ['q' => 'Preciso saber programar?', 'a' => 'Nao. O Shopla foi pensado para quem quer cadastrar produtos, personalizar a loja e compartilhar o link sem mexer com codigo.'],
         ['q' => 'O cliente precisa baixar aplicativo?', 'a' => 'Nao. Ele abre o link da vitrine pelo celular, escolhe os produtos e envia o pedido pelo WhatsApp.'],
-        ['q' => 'Da para usar de graca?', 'a' => 'Sim. O plano gratuito permite cadastrar ate 6 produtos para testar a vitrine e comecar a vender.'],
+        ['q' => 'Da para usar de graca?', 'a' => 'Sim. O plano gratuito permite cadastrar ate 10 produtos para testar a vitrine e comecar a vender.'],
         ['q' => 'Serve para qual tipo de loja?', 'a' => 'Serve para produtos fisicos, artesanato, personalizados, roupas, doces, presentes, papelaria, pequenos catalogos e lojas que vendem pelo WhatsApp.'],
         ['q' => 'Como o pedido chega para mim?', 'a' => 'O cliente monta o carrinho, preenche os dados e o Shopla prepara uma mensagem organizada para enviar no seu WhatsApp.'],
     ];
@@ -715,7 +715,7 @@
 
                         <div class="mt-10 grid sm:grid-cols-3 gap-3 max-w-2xl">
                             <div class="landing-stat-card soft-card rounded-3xl p-4">
-                                <p class="text-3xl font-black">6</p>
+                                <p class="text-3xl font-black">10</p>
                                 <p class="text-sm text-gray-500">produtos para testar gratis</p>
                             </div>
                             <div class="landing-stat-card soft-card rounded-3xl p-4" style="animation-delay: .35s">

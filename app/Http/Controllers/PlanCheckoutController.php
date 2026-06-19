@@ -14,13 +14,15 @@ class PlanCheckoutController extends Controller
         $data = $request->validate([
             'return_to' => ['nullable', 'in:plans,onboarding'],
             'billing_period' => ['nullable', 'in:monthly,annual'],
+            'payment_method' => ['nullable', 'in:credit_card,pix'],
         ]);
 
         $returnTo = $data['return_to'] ?? 'plans';
         $billingPeriod = $data['billing_period'] ?? 'monthly';
+        $paymentMethod = $data['payment_method'] ?? 'credit_card';
 
         try {
-            $subscription = $checkout->start($request->user(), $plan, $returnTo, $billingPeriod);
+            $subscription = $checkout->start($request->user(), $plan, $returnTo, $billingPeriod, $paymentMethod);
         } catch (RuntimeException $exception) {
             return back()->with('error', $exception->getMessage());
         }

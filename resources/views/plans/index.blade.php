@@ -160,18 +160,33 @@
                                     <form method="POST" action="{{ route('plans.checkout', $key) }}">
                                         @csrf
                                         <input type="hidden" name="billing_period" value="monthly">
+                                        <input type="hidden" name="payment_method" value="credit_card">
                                         <button type="submit" class="w-full rounded-2xl px-5 py-3 font-semibold text-white shadow-sm hover:-translate-y-0.5 transition" style="background: {{ $theme['primary'] }}">
-                                            Assinar mensal
+                                            Mensal no cartao
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('plans.checkout', $key) }}">
+                                        @csrf
+                                        <input type="hidden" name="billing_period" value="monthly">
+                                        <input type="hidden" name="payment_method" value="pix">
+                                        <button type="submit" class="w-full rounded-2xl px-5 py-3 font-semibold border border-green-200 bg-green-50 text-green-700 hover:-translate-y-0.5 transition">
+                                            Mensal via Pix
                                         </button>
                                     </form>
 
                                     <form method="POST" action="{{ route('plans.checkout', $key) }}">
                                         @csrf
                                         <input type="hidden" name="billing_period" value="annual">
+                                        <input type="hidden" name="payment_method" value="credit_card">
                                         <button type="submit" class="w-full rounded-2xl px-5 py-3 font-semibold border" style="border-color: {{ $theme['primary'] }}; color: {{ $theme['primary'] }}">
                                             Anual com {{ number_format($plan['annual_discount_percent'] ?? 10, 0) }}% off
                                         </button>
                                     </form>
+
+                                    <p class="text-xs leading-5" style="color: {{ $theme['muted'] }}">
+                                        No Pix, uma nova cobranca e gerada a cada mes e precisa ser paga para manter o plano ativo.
+                                    </p>
                                 </div>
                             @else
                                 <button class="w-full rounded-2xl px-5 py-3 font-semibold text-white opacity-60" style="background: {{ $theme['primary'] }}" disabled>

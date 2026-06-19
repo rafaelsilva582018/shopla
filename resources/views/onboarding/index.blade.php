@@ -431,8 +431,19 @@
                                                             @csrf
                                                             <input type="hidden" name="return_to" value="onboarding">
                                                             <input type="hidden" name="billing_period" value="monthly">
+                                                            <input type="hidden" name="payment_method" value="credit_card">
                                                             <button class="w-full rounded-2xl px-4 py-3 text-white font-bold" :style="`background: ${activeTheme.primary}`">
-                                                                Mensal
+                                                                Mensal no cartao
+                                                            </button>
+                                                        </form>
+
+                                                        <form method="POST" action="{{ route('plans.checkout', $planKey) }}">
+                                                            @csrf
+                                                            <input type="hidden" name="return_to" value="onboarding">
+                                                            <input type="hidden" name="billing_period" value="monthly">
+                                                            <input type="hidden" name="payment_method" value="pix">
+                                                            <button class="w-full rounded-2xl px-4 py-3 border border-green-200 bg-green-50 text-green-700 font-bold">
+                                                                Mensal via Pix
                                                             </button>
                                                         </form>
 
@@ -440,6 +451,7 @@
                                                             @csrf
                                                             <input type="hidden" name="return_to" value="onboarding">
                                                             <input type="hidden" name="billing_period" value="annual">
+                                                            <input type="hidden" name="payment_method" value="credit_card">
                                                             <button class="w-full rounded-2xl px-4 py-3 border font-bold" :style="`border-color: ${activeTheme.primary}; color: ${activeTheme.primary}`">
                                                                 Anual -{{ number_format($plan['annual_discount_percent'] ?? 10, 0) }}%
                                                             </button>

@@ -79,6 +79,7 @@ class OnboardingController extends Controller
         $data = $request->validate([
             'plan' => ['required', Rule::in($planKeys)],
             'billing_period' => ['nullable', 'in:monthly,annual'],
+            'payment_method' => ['nullable', 'in:credit_card,pix'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['required_unless:plan,free', 'nullable', 'string', 'max:30'],
             'document' => ['required_unless:plan,free', 'nullable', 'string', 'max:30'],
@@ -129,7 +130,13 @@ class OnboardingController extends Controller
         ]);
 
         try {
-            $subscription = $checkout->start($user->fresh(), $data['plan'], 'onboarding', $data['billing_period'] ?? 'monthly');
+            $subscription = $checkout->start(
+                $user->fresh(),
+                $data['plan'],
+                'onboarding',
+                $data['billing_period'] ?? 'monthly',
+                $data['payment_method'] ?? 'credit_card'
+            );
         } catch (RuntimeException $exception) {
             return back()->withInput()->with('error', $exception->getMessage());
         }
