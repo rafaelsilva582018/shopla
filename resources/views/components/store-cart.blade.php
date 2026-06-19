@@ -117,6 +117,70 @@
                         </div>
                     @endif
 
+                    @if($orderCompleted && $pixPayload)
+                        <div x-data="{ copied: '' }" class="py-2">
+                            <div class="text-center">
+                                <span class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-green-100 text-green-700">
+                                    <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 6 9 17l-5-5"></path>
+                                    </svg>
+                                </span>
+                                <p class="mt-4 text-sm font-bold uppercase tracking-widest" style="color: {{ $sf['primary'] }}">Pedido #{{ $completedOrderId }}</p>
+                                <h3 class="mt-2 text-3xl font-black" style="color: {{ $sf['text'] }}">Pedido confirmado</h3>
+                                <p class="mt-2" style="color: {{ $sf['muted'] }}">Pague pelo Pix e envie o comprovante para a loja.</p>
+                            </div>
+
+                            <div class="mt-6 rounded-3xl border p-5 text-center" style="background: {{ $sf['secondary'] }}; border-color: {{ $sf['border'] }}">
+                                <p class="text-sm font-semibold" style="color: {{ $sf['muted'] }}">Valor do pedido</p>
+                                <p class="mt-1 text-4xl font-black" style="color: {{ $sf['primary'] }}">R$ {{ number_format($completedTotal, 2, ',', '.') }}</p>
+
+                                <div
+                                    wire:ignore
+                                    wire:key="pix-qr-{{ $completedOrderId }}"
+                                    class="mx-auto mt-5 flex w-fit rounded-3xl bg-white p-4 shadow-sm"
+                                    x-ref="qr"
+                                    x-init="$nextTick(() => new QRCode($refs.qr, { text: @js($pixPayload), width: 220, height: 220, colorDark: '#111827', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }))"
+                                ></div>
+
+                                <p class="mt-4 text-xs" style="color: {{ $sf['muted'] }}">Abra o app do banco e escaneie o QR Code.</p>
+                            </div>
+
+                            <div class="mt-5 rounded-3xl border p-5" style="border-color: {{ $sf['border'] }}">
+                                <p class="text-xs font-bold uppercase tracking-widest" style="color: {{ $sf['muted'] }}">Chave Pix</p>
+                                <p class="mt-2 break-all font-bold" style="color: {{ $sf['text'] }}">{{ $store->pix_key }}</p>
+                                <button
+                                    type="button"
+                                    @click="navigator.clipboard.writeText(@js($store->pix_key)); copied = 'key'; setTimeout(() => copied = '', 1800)"
+                                    class="mt-4 w-full rounded-2xl border px-5 py-3 font-bold"
+                                    style="border-color: {{ $sf['border'] }}; color: {{ $sf['primary'] }}"
+                                >
+                                    <span x-text="copied === 'key' ? 'Chave copiada' : 'Copiar chave Pix'"></span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="navigator.clipboard.writeText(@js($pixPayload)); copied = 'payload'; setTimeout(() => copied = '', 1800)"
+                                    class="mt-2 w-full rounded-2xl px-5 py-3 font-bold text-white"
+                                    style="background: {{ $sf['primary'] }}"
+                                >
+                                    <span x-text="copied === 'payload' ? 'Codigo copiado' : 'Copiar Pix Copia e Cola'"></span>
+                                </button>
+                            </div>
+
+                            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                                @if($completedWhatsappUrl && $completedWhatsappUrl !== '#')
+                                    <a href="{{ $completedWhatsappUrl }}" target="_blank" class="flex items-center justify-center rounded-2xl bg-green-500 px-5 py-4 text-center font-bold text-white">
+                                        Enviar pedido no WhatsApp
+                                    </a>
+                                @endif
+
+                                <button type="button" wire:click="finishOrder" class="rounded-2xl border px-5 py-4 font-bold" style="border-color: {{ $sf['border'] }}; color: {{ $sf['text'] }}">
+                                    Concluir
+                                </button>
+                            </div>
+                        </div>
+                    @else
+
                     @forelse($cart as $item)
                         <div class="rounded-3xl border p-4 mb-4" style="border-color: {{ $sf['border'] }}; background: {{ $sf['secondary'] }}">
                             <div class="flex gap-4">
@@ -320,6 +384,7 @@
                             </svg>
                             Confirmar pedido
                         </button>
+                    @endif
                     @endif
                 </div>
             </div>

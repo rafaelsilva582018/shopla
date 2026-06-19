@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Store;
+use App\Support\PixPayload;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -20,6 +21,12 @@ class StoreCart extends Component
     public bool $open = false;
 
     public ?string $stockMessage = null;
+
+    public bool $orderCompleted = false;
+    public ?string $pixPayload = null;
+    public ?string $completedWhatsappUrl = null;
+    public ?float $completedTotal = null;
+    public ?int $completedOrderId = null;
 
     public string $customer_name = '';
     public string $customer_whatsapp = '';
@@ -39,6 +46,17 @@ class StoreCart extends Component
 
     public function closeCart(): void
     {
+        $this->open = false;
+    }
+
+    public function finishOrder(): void
+    {
+        $this->cart = [];
+        $this->orderCompleted = false;
+        $this->pixPayload = null;
+        $this->completedWhatsappUrl = null;
+        $this->completedTotal = null;
+        $this->completedOrderId = null;
         $this->open = false;
     }
 
@@ -219,7 +237,26 @@ class StoreCart extends Component
             }
         }
 
-        $this->redirect($this->whatsappLink());
+        $whatsappUrl = $this->whatsappLink();
+
+        if ($this->store->pix_enabled && filled($this->store->pix_key)) {
+            $this->completedOrderId = $order->id;
+            $this->completedTotal = (float) $order->total;
+            $this->completedWhatsappUrl = $whatsappUrl;
+            $this->pixPayload = PixPayload::make(
+                $this->store->pix_key,
+                $this->store->pix_receiver_name ?: $this->store->name,
+                $this->store->pix_receiver_city ?: 'BRASIL',
+                (float) $order->total,
+                'SHOPLA' . $order->id
+            );
+            $this->orderCompleted = true;
+            $this->open = true;
+
+            return;
+        }
+
+        $this->redirect($whatsappUrl);
     }
 
     private function canAddProduct(Product $product): bool

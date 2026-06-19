@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.favicon')
     <title>{{ $store->name }}</title>
     @vite(['resources/css/app.css'])
     @livewireStyles
@@ -76,6 +77,7 @@
         <livewire:public-store :store="$store" :storefront-theme="$storefrontTheme" />
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     @livewireScripts
 </body>
 </html>

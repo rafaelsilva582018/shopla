@@ -8,6 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.favicon')
     <title>Sobre a Shopla</title>
     <meta name="description" content="Conheca a Shopla, uma plataforma para pequenos negocios criarem vitrines online e venderem melhor pelo WhatsApp.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

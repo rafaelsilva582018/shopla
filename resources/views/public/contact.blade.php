@@ -10,6 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('partials.favicon')
     <title>Contato - Shopla</title>
     <meta name="description" content="Fale com a Shopla pelo WhatsApp para tirar duvidas sobre vitrines, planos e vendas pelo WhatsApp.">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

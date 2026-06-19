@@ -15,6 +15,11 @@ class Store extends Model
         'name',
         'slug',
         'whatsapp',
+        'pix_enabled',
+        'pix_key_type',
+        'pix_key',
+        'pix_receiver_name',
+        'pix_receiver_city',
         'instagram',
         'description',
         'logo',
@@ -44,6 +49,7 @@ class Store extends Model
 
     protected $casts = [
         'onboarding_completed_at' => 'datetime',
+        'pix_enabled' => 'boolean',
     ];
 
     public function dashboardTheme(): array

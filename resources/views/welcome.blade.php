@@ -69,6 +69,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('partials.favicon')
 
     <title>Shopla - sua vitrine online para vender pelo WhatsApp</title>
     <meta name="description" content="Crie uma vitrine online bonita, organize pedidos pelo WhatsApp, controle produtos, estoque e vendas com um painel simples.">

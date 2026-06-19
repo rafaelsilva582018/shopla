@@ -56,6 +56,11 @@ class StoreController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'whatsapp' => 'nullable|string|max:20',
+            'pix_enabled' => ['nullable', 'boolean'],
+            'pix_key_type' => ['required_if:pix_enabled,1', 'nullable', Rule::in(['cpf', 'cnpj', 'email', 'phone', 'random'])],
+            'pix_key' => ['required_if:pix_enabled,1', 'nullable', 'string', 'max:255'],
+            'pix_receiver_name' => ['required_if:pix_enabled,1', 'nullable', 'string', 'max:25'],
+            'pix_receiver_city' => ['required_if:pix_enabled,1', 'nullable', 'string', 'max:15'],
             'instagram' => 'nullable|string|max:50',
             'description' => 'nullable|string',
             'logo' => 'nullable|image|max:51200',
@@ -103,6 +108,10 @@ class StoreController extends Controller
         $data = $request->only([
             'name',
             'whatsapp',
+            'pix_key_type',
+            'pix_key',
+            'pix_receiver_name',
+            'pix_receiver_city',
             'instagram',
             'description',
             'store_theme',
@@ -127,6 +136,19 @@ class StoreController extends Controller
 
         if ($canChooseCustomSlug) {
             $data['slug'] = Str::slug($request->input('slug'));
+        }
+
+        $data['pix_enabled'] = $request->boolean('pix_enabled');
+
+        if (!$data['pix_enabled']) {
+            $data['pix_key_type'] = null;
+            $data['pix_key'] = null;
+            $data['pix_receiver_name'] = null;
+            $data['pix_receiver_city'] = null;
+        } else {
+            $data['pix_key'] = trim((string) $data['pix_key']);
+            $data['pix_receiver_name'] = Str::upper(trim((string) $data['pix_receiver_name']));
+            $data['pix_receiver_city'] = Str::upper(trim((string) $data['pix_receiver_city']));
         }
 
         $data['instagram'] = $this->normalizeInstagram($data['instagram'] ?? null);

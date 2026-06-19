@@ -190,6 +190,68 @@
                     </div>
                 </section>
 
+                <section
+                    x-data="{ enabled: {{ old('pix_enabled', $store->pix_enabled) ? 'true' : 'false' }} }"
+                    class="rounded-3xl p-6 shadow-sm border"
+                    style="background: {{ $theme['card'] }}; border-color: {{ $theme['border'] }}"
+                >
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-widest" style="color: {{ $theme['muted'] }}">Pagamento</p>
+                            <h2 class="mt-1 text-2xl font-bold">Receber pedidos via Pix</h2>
+                            <p class="mt-2 text-sm" style="color: {{ $theme['muted'] }}">Mostra a chave e um QR Code depois que o cliente confirma o pedido.</p>
+                        </div>
+
+                        <label class="inline-flex cursor-pointer items-center gap-3">
+                            <input type="hidden" name="pix_enabled" value="0">
+                            <input
+                                type="checkbox"
+                                name="pix_enabled"
+                                value="1"
+                                x-model="enabled"
+                                class="h-6 w-6 rounded border"
+                                style="color: {{ $theme['primary'] }}; border-color: {{ $theme['border'] }}"
+                            >
+                            <span class="font-bold" x-text="enabled ? 'Ativado' : 'Desativado'"></span>
+                        </label>
+                    </div>
+
+                    <div x-cloak x-show="enabled" x-transition class="mt-6 grid gap-5 md:grid-cols-2">
+                        <div>
+                            <label class="block mb-2 font-semibold">Tipo da chave</label>
+                            <select name="pix_key_type" x-bind:required="enabled" class="w-full border rounded-2xl p-4" style="border-color: {{ $theme['border'] }}">
+                                <option value="">Selecione</option>
+                                <option value="cpf" @selected(old('pix_key_type', $store->pix_key_type) === 'cpf')>CPF</option>
+                                <option value="cnpj" @selected(old('pix_key_type', $store->pix_key_type) === 'cnpj')>CNPJ</option>
+                                <option value="email" @selected(old('pix_key_type', $store->pix_key_type) === 'email')>E-mail</option>
+                                <option value="phone" @selected(old('pix_key_type', $store->pix_key_type) === 'phone')>Telefone</option>
+                                <option value="random" @selected(old('pix_key_type', $store->pix_key_type) === 'random')>Chave aleatoria</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('pix_key_type')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">Chave Pix</label>
+                            <input name="pix_key" value="{{ old('pix_key', $store->pix_key) }}" x-bind:required="enabled" class="w-full border rounded-2xl p-4" style="border-color: {{ $theme['border'] }}" placeholder="Digite exatamente como foi cadastrada no banco">
+                            <x-input-error :messages="$errors->get('pix_key')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">Nome do recebedor</label>
+                            <input name="pix_receiver_name" value="{{ old('pix_receiver_name', $store->pix_receiver_name ?: $store->name) }}" maxlength="25" x-bind:required="enabled" class="w-full border rounded-2xl p-4 uppercase" style="border-color: {{ $theme['border'] }}" placeholder="NOME CADASTRADO NO PIX">
+                            <p class="mt-2 text-xs" style="color: {{ $theme['muted'] }}">Use o nome do titular da conta, com ate 25 caracteres.</p>
+                            <x-input-error :messages="$errors->get('pix_receiver_name')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">Cidade do recebedor</label>
+                            <input name="pix_receiver_city" value="{{ old('pix_receiver_city', $store->pix_receiver_city) }}" maxlength="15" x-bind:required="enabled" class="w-full border rounded-2xl p-4 uppercase" style="border-color: {{ $theme['border'] }}" placeholder="SAO PAULO">
+                            <p class="mt-2 text-xs" style="color: {{ $theme['muted'] }}">Cidade do titular, sem acentos, com ate 15 caracteres.</p>
+                            <x-input-error :messages="$errors->get('pix_receiver_city')" class="mt-2" />
+                        </div>
+                    </div>
+                </section>
+
                 {{-- imagens --}}
                 <section
                     class="rounded-3xl p-6 shadow-sm border"
