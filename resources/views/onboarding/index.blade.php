@@ -457,6 +457,10 @@
                                                                 Anual -{{ number_format($plan['annual_discount_percent'] ?? 10, 0) }}%
                                                             </button>
                                                         </form>
+
+                                                        <p class="text-xs leading-5" :style="`color: ${activeTheme.muted}`">
+                                                            No Pix, o pagamento e mensal e a renovacao precisa ser feita a cada novo ciclo.
+                                                        </p>
                                                     </div>
                                                 @else
                                                     <button class="w-full mt-4 rounded-2xl px-4 py-3 text-white font-bold opacity-60" :style="`background: ${activeTheme.primary}`" disabled>

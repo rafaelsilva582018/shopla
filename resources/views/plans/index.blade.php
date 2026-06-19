@@ -185,7 +185,7 @@
                                     </form>
 
                                     <p class="text-xs leading-5" style="color: {{ $theme['muted'] }}">
-                                        No Pix, uma nova cobranca e gerada a cada mes e precisa ser paga para manter o plano ativo.
+                                        No Pix, a renovacao precisa ser feita manualmente a cada novo ciclo mensal.
                                     </p>
                                 </div>
                             @else

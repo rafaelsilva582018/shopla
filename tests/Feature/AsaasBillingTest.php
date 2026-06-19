@@ -119,8 +119,8 @@ class AsaasBillingTest extends TestCase
             ->assertRedirect('https://asaas.com/checkoutSession/show?id=checkout_pix');
 
         Http::assertSent(fn ($request) => $request['billingTypes'] === ['PIX']
-            && $request['chargeTypes'] === ['RECURRENT']
-            && $request['subscription']['cycle'] === 'MONTHLY');
+            && $request['chargeTypes'] === ['DETACHED']
+            && !isset($request['subscription']));
     }
 
     public function test_user_can_start_annual_checkout_with_discount(): void

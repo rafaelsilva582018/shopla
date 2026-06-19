@@ -42,6 +42,12 @@ class PlanCheckoutService
         $billing = $this->billingOption($plan, $billingPeriod);
         $billingType = $paymentMethod === 'pix' ? 'PIX' : 'CREDIT_CARD';
 
+        if ($billingType === 'PIX' && $billingPeriod !== 'monthly') {
+            throw ValidationException::withMessages([
+                'payment_method' => 'O pagamento anual esta disponivel somente no cartao.',
+            ]);
+        }
+
         $subscription = PlanSubscription::create([
             'user_id' => $user->id,
             'plan' => $planKey,
@@ -82,9 +88,9 @@ class PlanCheckoutService
         $cancelUrl = route('plans.return', ['status' => 'cancelado', 'return_to' => $returnTo]);
         $expiredUrl = route('plans.return', ['status' => 'expirado', 'return_to' => $returnTo]);
 
-        return array_filter([
+        $payload = [
             'billingTypes' => [$billingType],
-            'chargeTypes' => ['RECURRENT'],
+            'chargeTypes' => [$billingType === 'PIX' ? 'DETACHED' : 'RECURRENT'],
             'minutesToExpire' => config('services.asaas.checkout_expiration_minutes', 120),
             'externalReference' => $subscription->external_reference,
             'callback' => [
@@ -101,11 +107,18 @@ class PlanCheckoutService
                 ],
             ],
             'customerData' => $this->customerData($user),
-            'subscription' => [
+        ];
+
+        // O Checkout Asaas aceita recorrencia apenas no cartao. Pix e uma
+        // cobranca avulsa e, por isso, nao pode receber o bloco subscription.
+        if ($billingType === 'CREDIT_CARD') {
+            $payload['subscription'] = [
                 'cycle' => $billing['cycle'],
                 'nextDueDate' => now()->format('Y-m-d H:i:s'),
-            ],
-        ], fn ($value) => filled($value));
+            ];
+        }
+
+        return array_filter($payload, fn ($value) => filled($value));
     }
 
     private function billingOption(array $plan, string $billingPeriod): array
