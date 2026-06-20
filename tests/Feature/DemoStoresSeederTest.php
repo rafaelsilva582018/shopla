@@ -21,7 +21,18 @@ class DemoStoresSeederTest extends TestCase
 
         $this->assertSame(5, User::where('email', 'like', 'demo%@shopla.test')->count());
         $this->assertSame(5, Store::where('slug', 'like', 'demo-%')->count());
-        $this->assertSame(20, Product::whereHas('store', fn ($query) => $query->where('slug', 'like', 'demo-%'))->count());
+        $this->assertFalse(
+            Store::where('slug', 'like', 'demo-%')->get()->contains(
+                fn (Store $store) => str_starts_with((string) $store->instagram, '@')
+            )
+        );
+        $this->assertSame(100, Product::whereHas('store', fn ($query) => $query->where('slug', 'like', 'demo-%'))->count());
+        $this->assertTrue(
+            Store::where('slug', 'like', 'demo-%')
+                ->withCount('products')
+                ->get()
+                ->every(fn (Store $store) => $store->products_count === 20)
+        );
         $this->assertSame(30, Order::whereHas('store', fn ($query) => $query->where('slug', 'like', 'demo-%'))->count());
         $this->assertSame(60, Order::whereHas('store', fn ($query) => $query->where('slug', 'like', 'demo-%'))->withCount('items')->get()->sum('items_count'));
     }
